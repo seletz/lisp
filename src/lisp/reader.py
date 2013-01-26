@@ -78,17 +78,21 @@ def lisp_read(s, state=None):
     for tok in tokenize(s):
         if tok == TOK_PAREN_OPEN:
             subexp = []
-            sexp.append(subexp)
             stack.append(sexp)
             sexp = subexp
+
         elif tok == TOK_PAREN_CLOSE:
             if not stack:
                 raise ReaderError("unbalanced open paren")
 
-            sexp = tuple(stack.pop())
+            tmp = stack.pop()
+            tmp.append(tuple(sexp))
+            sexp = tmp
+            logger.debug("lisp_read: pop => %r" % sexp)
 
         elif RX_NUMBER.match(tok):
             sexp.append(read_number(tok))
+
         elif RX_SYMBOL.match(tok):
             sexp.append(read_symbol(tok))
         else:
@@ -97,10 +101,7 @@ def lisp_read(s, state=None):
     if stack:
         raise ReaderError("missing close paren")
 
-    logger.debug("lisp_read: => %r" % sexp[0])
-    r = sexp[0]
-    if type(r) is types.ListType:
-        return tuple(r)
-    return r
+    logger.debug("lisp_read: => %r" % str(sexp[0]))
+    return sexp[0]
 
 # vim: set ft=python ts=4 sw=4 expandtab :

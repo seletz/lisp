@@ -1,6 +1,9 @@
 import unittest
 
 from  lisp.tokenizer import *
+from  lisp.lisp import setup_logging
+from  lisp.lisp import lisp_read
+
 
 class TestTokenizer(unittest.TestCase):
 
@@ -12,8 +15,4 @@ class TestTokenizer(unittest.TestCase):
         assert tuple(tokenize(" ( ) ")) == (TOK_PAREN_OPEN, TOK_PAREN_CLOSE)
         assert tuple(tokenize("()")) == (TOK_PAREN_OPEN, TOK_PAREN_CLOSE)
 
-    def test_tok_long(self):
-        assert len(list(tokenize("( 1 2 3)"))) == 5
-        assert len(list(tokenize("(a (b c))"))) == 7
 
-# vim: set ft=python ts=4 sw=4 expandtab : 
