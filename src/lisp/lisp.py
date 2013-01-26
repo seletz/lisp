@@ -14,6 +14,7 @@ import sys
 import types
 import logging
 
+from evaluator import Frame
 from evaluator import lisp_eval
 from reader import lisp_read
 from reader import ReaderError
@@ -24,6 +25,9 @@ def setup_logging(level=logging.DEBUG):
     logging.basicConfig(level=level, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
 
 
+def setup_env():
+    return {}
+
 def lisp_print(sexp):
     if type(sexp) == types.TupleType:
         return "( " + " ".join(map(lisp_print, sexp)) + " )"
@@ -31,13 +35,14 @@ def lisp_print(sexp):
         return str(sexp)
 
 def main():
+    environment = Frame.global_frame()
     while True:
         try:
             inp = raw_input(">>> ")
         except EOFError:
             break
         try:
-            print lisp_print(lisp_eval(lisp_read(inp)))
+            print lisp_print(lisp_eval(lisp_read(inp), environment))
         except ReaderError, e:
             print "reader error: " + str(e)
 
