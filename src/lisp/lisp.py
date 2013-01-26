@@ -14,6 +14,7 @@ import sys
 import types
 import logging
 
+from evaluator import lisp_eval
 from reader import lisp_read
 from reader import ReaderError
 
@@ -22,9 +23,6 @@ logger = logging.getLogger("nexiles.tools.meta")
 def setup_logging(level=logging.DEBUG):
     logging.basicConfig(level=level, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
 
-
-def lisp_eval(sexp):
-    return sexp
 
 def lisp_print(sexp):
     if type(sexp) == types.TupleType:
