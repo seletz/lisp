@@ -18,5 +18,16 @@ class TestBuiltins(unittest.TestCase):
         assert cons((),2) == ((),2)
         assert cons(1, ()) == (1)
 
+    def test_pred(self):
+        assert empty(()) == True
+        assert empty((1,)) == False
+
+        assert list_p((1,)) == True
+        assert list_p(()) == True
+        assert list_p(1) == False
+
+        assert func_p(1) == False
+        assert func_p(lambda x: x) == True
+
 # vim: set ft=python ts=4 sw=4 expandtab :
 
