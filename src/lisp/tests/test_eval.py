@@ -74,7 +74,11 @@ class TestEvaluator(unittest.TestCase):
                 assert lisp_eval(sexp, env) == 4
 
     def test_eval_predicates(self):
-        pass
+        with environment() as env:
+            with READ("(number? 3)") as sexp:
+                assert lisp_eval(sexp, env) == True
+            with READ("(number? 3.5)") as sexp:
+                assert lisp_eval(sexp, env) == True
 
 # vim: set ft=python ts=4 sw=4 expandtab :
 
