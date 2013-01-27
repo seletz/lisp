@@ -16,23 +16,42 @@ import ast
 import types
 import logging
 
+from collections import namedtuple
+
 from exc import ReaderError
 
 from tokenizer import *
 
 logger = logging.getLogger("lisp.reader")
 
+
 RX_NUMBER = re.compile("^[+-]?(\d*\.?\d+|\d+\.?\d*)([eE][+-]?\d+)?$")
-RX_SYMBOL = re.compile("^([a-zA-Z0-9+-:$\"\*\?]+)$")
+RX_STRING = re.compile('^"(.*?)"$')
+RX_SYMBOL = re.compile("^([a-zA-Z0-9+-:$\*\?]+)$")
+
+
+class Symbol(object):
+    def __init__(self, name):
+        self.name = name
+
+    def __eq__(self, other):
+        return self.name == other.name
 
 
 def read_number(token):
     logger.debug("read_number: %r" % token)
     return ast.literal_eval(token)
 
+
 def read_symbol(token):
     logger.debug("read_symbol: %r" % token)
-    return token
+    return Symbol(token)
+
+
+def read_string(token):
+    logger.debug("read_symbol: %r" % token)
+    return RX_STRING.match(token).groups()[0]
+
 
 def lisp_read(s, state=None):
     logger.debug("lisp_read: s=%r" % s)
@@ -66,6 +85,9 @@ def lisp_read(s, state=None):
 
         elif RX_SYMBOL.match(tok):
             sexp.append(read_symbol(tok))
+
+        elif RX_STRING.match(tok):
+            sexp.append(read_string(tok))
         else:
             raise ReaderError("unexpected token: %r" % tok)
 
