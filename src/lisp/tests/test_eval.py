@@ -35,9 +35,16 @@ class TestEvaluator(unittest.TestCase):
 
     def test_eval_list(self):
         import operator
-        with environment(func=operator.add) as env:
+        def add(*args):
+            return reduce(operator.add, args)
+
+        with environment(func=add) as env:
             with READ("(func 1 2)") as sexp:
                 assert lisp_eval(sexp, env) == 3
+            with READ("(func 1 2 3)") as sexp:
+                assert lisp_eval(sexp, env) == 6
+            with READ("(func 1 (func 2 2))") as sexp:
+                assert lisp_eval(sexp, env) == 5
 
 
 # vim: set ft=python ts=4 sw=4 expandtab :

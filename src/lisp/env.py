@@ -15,6 +15,7 @@ import logging
 import contextlib
 
 from exc import *
+from builtin import *
 
 logger = logging.getLogger("lisp.env")
 
@@ -91,7 +92,14 @@ class Frame(object):
         :returns: frame instance
         """
         if not cls.GLOBALS:
-            cls.GLOBALS = Frame()
+            glob = cls.GLOBALS = Frame()
+            glob.set("car", car)
+            glob.set("cdr", cdr)
+            glob.set("cons", cons)
+            glob.set("+", lambda args: reduce(operator.add, args))
+            glob.set("-", lambda args: reduce(operator.sub, args))
+            glob.set("*", lambda args: reduce(operator.mul, args))
+
         return cls.GLOBALS
 
     def __repr__(self):

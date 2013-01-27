@@ -22,14 +22,24 @@ logger = logging.getLogger("lisp.eval")
 __all__ = ["lisp_eval"]
 
 
+def evaluate_func(f, args, env):
+    logger.debug("evaluate_func: f=%r" % f)
+    return f(*map(lambda x: lisp_eval(x, env), args))
+
+
 def evaluate_list(lst, env):
     logger.debug("evaluate_list(lst=%r" % repr(lst))
+
+    first = car(lst)
+    rest  = cdr(lst)
+
+    if func_p(env.lookup(first)):
+        return evaluate_func(env.lookup(first), rest, env)
 
     f = env.lookup(car(lst))
     if not func_p(f):
         raise EvaluatorError("the value of `%s` is not a function." % car(lst))
 
-    return f(*cdr(lst))
 
 
 def lisp_eval(sexp, env=None):
