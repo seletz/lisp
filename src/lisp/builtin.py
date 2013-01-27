@@ -15,6 +15,8 @@ cdr = lambda x: x and x[1:] or None
 cons = lambda a, b: b and (a,b) or (a)
 empty = lambda x: x == ()
 list_p = lambda x: type(x) == types.TupleType
+number_p = lambda x: type(x) in (types.IntType, types.FloatType, types.ComplexType)
+string_p = lambda x: type(x) in types.StringTypes
 func_p = callable
 
 def list_f(*args):

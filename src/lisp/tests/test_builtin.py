@@ -29,6 +29,13 @@ class TestBuiltins(unittest.TestCase):
         assert func_p(1) == False
         assert func_p(lambda x: x) == True
 
+        assert number_p(1) == True
+        assert number_p(1.0) == True
+        assert number_p(1+3j) == True
+
+        assert string_p("foo") == True
+        assert string_p(u"foo") == True
+
     def test_reducers(self):
         assert add_f(1,2,3) == 6
         assert sub_f(1,2,3) == -4
