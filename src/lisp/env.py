@@ -28,6 +28,7 @@ class Frame(object):
     def set(self, var, value):
         logger.debug("Frame(%d).set: %s <= %r" % (id(self), var, value))
         self.env[var] = value
+        return self
 
     def lookup(self, var):
         if var in self.env:
@@ -36,7 +37,7 @@ class Frame(object):
             return value
 
         if self.parent:
-            logger.debug("Frame(%d).lookup: %s => %r" % (id(self), var, value))
+            logger.debug("Frame(%d).lookup: %s => lookup in parent" % (id(self), var))
             return self.parent.lookup(var)
 
         print "Lookup Error. Frame dump (innermost first):"

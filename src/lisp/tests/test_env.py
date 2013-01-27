@@ -4,25 +4,34 @@ from  lisp.exc import *
 from  lisp.evaluator import *
 
 
-class TestEvaluator(unittest.TestCase):
+class TestEnv(unittest.TestCase):
 
-    def test_eval_number(self):
-        """
-        numbers evaluate to themselves.
-        """
-        assert lisp_eval(3) == 3
-        assert lisp_eval(-3) == -3
+    def get_one(self, parent=None, **kw):
+        return Frame(parent=parent, **kw)
 
-    def test_eval_vars(self):
+    def test_lookup(self):
         """
-        vars evaluate to their values.
+        test environment lookup.
         """
-        env = Frame(a=42, b="foo")
-        assert lisp_eval("a", env) == 42
-        assert lisp_eval("b", env) == "foo"
-
         with self.assertRaises(EvaluatorError):
-            lisp_eval("x", env)
+            self.get_one().lookup("x")
+            self.get_one(x=1).lookup("y")
+
+        assert self.get_one(x=42).lookup("x") == 42
+
+        root = self.get_one(x=42)
+        assert self.get_one(parent=root).lookup("x") == 42
+        assert self.get_one(parent=root, x=43).lookup("x") == 43
+
+    def test_set(self):
+        """
+        test setting var values in a env.
+        """
+        root = self.get_one(x=42)
+
+        assert self.get_one(parent=root).set("y", 1).lookup("y") == 1
+        assert self.get_one(parent=root).set("y", 1).lookup("x") == 42
+        assert self.get_one(parent=root).set("x", 1).lookup("x") == 1
 
 # vim: set ft=python ts=4 sw=4 expandtab :
 
