@@ -21,7 +21,7 @@ from evaluator import Frame
 from evaluator import lisp_eval
 from reader import lisp_read
 
-logger = logging.getLogger("nexiles.tools.meta")
+logger = logging.getLogger("lisp.lisp")
 
 def setup_logging(level=logging.DEBUG):
     logging.basicConfig(level=level, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
