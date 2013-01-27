@@ -29,5 +29,11 @@ class TestBuiltins(unittest.TestCase):
         assert func_p(1) == False
         assert func_p(lambda x: x) == True
 
+    def test_reducers(self):
+        assert add_f(1,2,3) == 6
+        assert sub_f(1,2,3) == -4
+        assert mul_f(1,2,3,4) == 24
+        assert div_f(4.0,2,2) == 1
+
 # vim: set ft=python ts=4 sw=4 expandtab :
 

@@ -96,9 +96,11 @@ class Frame(object):
             glob.set("car", car)
             glob.set("cdr", cdr)
             glob.set("cons", cons)
-            glob.set("+", lambda args: reduce(operator.add, args))
-            glob.set("-", lambda args: reduce(operator.sub, args))
-            glob.set("*", lambda args: reduce(operator.mul, args))
+            glob.set("list", list_f)
+            glob.set("+", add_f)
+            glob.set("-", sub_f)
+            glob.set("*", mul_f)
+            glob.set("/", div_f)
 
         return cls.GLOBALS
 
@@ -139,10 +141,10 @@ def environment(parent=None, **kw):
     1
 
     """
-    if parent:
-        env = parent.new_frame(**kw)
-    else:
-        env = Frame(**kw)
+    if not parent:
+        parent = Frame.global_frame()
+
+    env = Frame(parent=parent, **kw)
 
     yield env
 

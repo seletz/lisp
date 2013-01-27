@@ -33,8 +33,9 @@ def evaluate_list(lst, env):
     first = car(lst)
     rest  = cdr(lst)
 
-    if func_p(env.lookup(first)):
-        return evaluate_func(env.lookup(first), rest, env)
+    func = env.lookup(first)
+    if func_p(func):
+        return evaluate_func(func, rest, env)
 
     f = env.lookup(car(lst))
     if not func_p(f):

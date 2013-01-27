@@ -37,6 +37,7 @@ def lisp_print(sexp):
         return str(sexp)
 
 def main():
+    setup_logging()
     environment = Frame.global_frame()
     while True:
         try:
@@ -51,7 +52,6 @@ def main():
             print "error evaluating: " + str(e)
 
 if __name__ == '__main__':
-    setup_logging()
     main()
 
 # vim: set ft=python ts=4 sw=4 expandtab :

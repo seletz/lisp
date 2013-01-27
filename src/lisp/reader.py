@@ -23,7 +23,7 @@ from tokenizer import *
 logger = logging.getLogger("lisp.reader")
 
 RX_NUMBER = re.compile("^[+-]?(\d*\.?\d+|\d+\.?\d*)([eE][+-]?\d+)?$")
-RX_SYMBOL = re.compile("^(\w+)$")
+RX_SYMBOL = re.compile("^([a-zA-Z0-9+-:$\?]+)$")
 
 
 def read_number(token):

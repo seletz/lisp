@@ -46,6 +46,15 @@ class TestEvaluator(unittest.TestCase):
             with READ("(func 1 (func 2 2))") as sexp:
                 assert lisp_eval(sexp, env) == 5
 
+    def test_eval_builtin(self):
+        with environment() as env:
+            with READ("(+ 1 2)") as sexp:
+                assert lisp_eval(sexp, env) == 3
+            with READ("(+ 1 2 3)") as sexp:
+                assert lisp_eval(sexp, env) == 6
+            with READ("(+ 1 (+ 2 2))") as sexp:
+                assert lisp_eval(sexp, env) == 5
+
 
 # vim: set ft=python ts=4 sw=4 expandtab :
 

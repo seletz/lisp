@@ -55,7 +55,7 @@ class TestEnv(unittest.TestCase):
 
     def test_context_mgr(self):
         with environment(x=1) as env:
-            assert env.parent is None
+            assert env.parent is Frame.GLOBALS
             assert env.lookup("x") == 1
 
         with environment(parent=self.get_one(x=42), x=1) as env:
