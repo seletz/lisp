@@ -1,5 +1,6 @@
 import unittest
 
+from  lisp.exc import *
 from  lisp.reader import lisp_read
 
 

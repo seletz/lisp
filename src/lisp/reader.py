@@ -16,6 +16,8 @@ import ast
 import types
 import logging
 
+from exc import ReaderError
+
 from tokenizer import *
 
 logger = logging.getLogger("lisp.reader")
@@ -23,8 +25,6 @@ logger = logging.getLogger("lisp.reader")
 RX_NUMBER = re.compile("^[+-]?(\d*\.?\d+|\d+\.?\d*)([eE][+-]?\d+)?$")
 RX_SYMBOL = re.compile("^(\w+)$")
 
-class ReaderError(RuntimeError):
-    pass
 
 def read_list(tokens):
     logger.debug("read_list: %r" % tokens)

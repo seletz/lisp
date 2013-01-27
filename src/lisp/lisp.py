@@ -14,10 +14,12 @@ import sys
 import types
 import logging
 
+from exc import ReaderError
+from exc import EvaluatorError
+
 from evaluator import Frame
 from evaluator import lisp_eval
 from reader import lisp_read
-from reader import ReaderError
 
 logger = logging.getLogger("nexiles.tools.meta")
 
@@ -45,6 +47,8 @@ def main():
             print lisp_print(lisp_eval(lisp_read(inp), environment))
         except ReaderError, e:
             print "reader error: " + str(e)
+        except EvaluatorError, e:
+            print "error evaluating: " + str(e)
 
 if __name__ == '__main__':
     setup_logging()
