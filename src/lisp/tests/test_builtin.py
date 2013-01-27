@@ -1,5 +1,6 @@
 import unittest
 
+from  lisp.reader import Symbol
 from  lisp.builtin import *
 
 class TestBuiltins(unittest.TestCase):
@@ -35,6 +36,8 @@ class TestBuiltins(unittest.TestCase):
 
         assert string_p("foo") == True
         assert string_p(u"foo") == True
+
+        assert symbol_p(Symbol("a"))
 
     def test_reducers(self):
         assert add_f(1,2,3) == 6

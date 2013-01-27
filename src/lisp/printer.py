@@ -10,6 +10,10 @@ __version__   = '$Revision: $'[11:-2]
 import types
 import logging
 
+from exc import *
+from builtin import *
+from reader import Symbol
+
 logger = logging.getLogger("lisp.print")
 
 
@@ -21,19 +25,54 @@ def print_number(n):
     7
 
     """
+    assert number_p(n)
     return str(n)
 
+def print_string(s):
+    """
+    strings print verbatim.
+
+    >>> print print_string("a")
+    a
+
+    """
+    assert string_p(s)
+    return str(s)
+
+def print_bool(n):
+    """
+    strings print verbatim.
+
+    >>> print print_bool(True)
+    #t
+    >>> print print_bool(False)
+    #f
+
+    """
+    assert bool_p(n)
+    return n and "#t" or "#f"
 
 def print_symbol(s):
     """
     symbols print verbatim.
 
-    >>> print print_symbol("x")
-    x
+    >>> print print_symbol(Symbol("x"))
+    #x
 
     """
-    return s
+    assert symbol_p(s)
+    return "#" + s.name
 
+def print_func(s):
+    """
+    funcs print verbatim.
+
+    >>> print print_func(lambda x: x)
+    #Func{...}
+
+    """
+    assert func_p(s)
+    return "#Func{" + repr(s) + "}"
 
 def print_list(lst):
     """
@@ -45,13 +84,26 @@ def print_list(lst):
     '()
 
     """
+    logger.debug("print_list: %s" % repr(lst))
+    assert list_p(lst)
     return "'(" + " ".join(map(lisp_print, lst)) + ")"
 
 
 def lisp_print(sexp):
-    if type(sexp) == types.TupleType:
+    logger.debug("lisp_print: sexp=%s" % repr(sexp))
+    if list_p(sexp):
         return print_list(sexp)
+    elif symbol_p(sexp):
+        return print_symbol(sexp)
+    elif number_p(sexp):
+        return print_number(sexp)
+    elif bool_p(sexp):
+        return print_bool(sexp)
+    elif string_p(sexp):
+        return print_string(sexp)
+    elif func_p(sexp):
+        return print_func(sexp)
     else:
-        return str(sexp)
+        raise PrinterError("Don't know how to print: %r" % (type(sexp)))
 
 # vim: set ft=python ts=4 sw=4 expandtab :

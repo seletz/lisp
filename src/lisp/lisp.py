@@ -30,6 +30,19 @@ def setup_logging(level=logging.DEBUG):
     logging.basicConfig(level=level, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
 
 
+def eval(s, env=None):
+    if not env:
+        env = Frame.global_frame()
+
+    sexp = lisp_read(s)
+    print "RD: " + repr(sexp)
+    sexp = lisp_eval(sexp, env)
+    print "EV: " + repr(sexp)
+    s = lisp_print(sexp)
+    print "PP: " + s
+    return s
+
+
 def main():
     setup_logging()
     environment = Frame.global_frame()
@@ -39,7 +52,7 @@ def main():
         except EOFError:
             break
         try:
-            print lisp_print(lisp_eval(lisp_read(inp), environment))
+            print eval(inp, environment)
         except ReaderError, e:
             print "reader error: " + str(e)
         except EvaluatorError, e:

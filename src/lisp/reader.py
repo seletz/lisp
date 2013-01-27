@@ -27,7 +27,7 @@ logger = logging.getLogger("lisp.reader")
 
 RX_NUMBER = re.compile("^[+-]?(\d*\.?\d+|\d+\.?\d*)([eE][+-]?\d+)?$")
 RX_STRING = re.compile('^"(.*?)"$')
-RX_SYMBOL = re.compile("^([a-zA-Z0-9+-:$\*\?]+)$")
+RX_SYMBOL = re.compile("^([a-zA-Z0-9+-:$\*\?!]+)$")
 
 
 class Symbol(object):
@@ -36,6 +36,9 @@ class Symbol(object):
 
     def __eq__(self, other):
         return self.name == other.name
+
+    def __repr__(self):
+        return "#Symbol{" + self.name + "}"
 
 
 def read_number(token):
@@ -49,7 +52,7 @@ def read_symbol(token):
 
 
 def read_string(token):
-    logger.debug("read_symbol: %r" % token)
+    logger.debug("read_string: %r" % token)
     return RX_STRING.match(token).groups()[0]
 
 
@@ -88,6 +91,13 @@ def lisp_read(s, state=None):
 
         elif RX_STRING.match(tok):
             sexp.append(read_string(tok))
+
+        elif tok.lower() == "#t":
+            sexp.append(True)
+
+        elif tok.lower() == "#f":
+            sexp.append(False)
+
         else:
             raise ReaderError("unexpected token: %r" % tok)
 

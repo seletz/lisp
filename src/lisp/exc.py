@@ -19,4 +19,7 @@ class EvaluatorError(RuntimeError):
 class ReaderError(RuntimeError):
     pass
 
+class PrinterError(RuntimeError):
+    pass
+
 # vim: set ft=python ts=4 sw=4 expandtab :

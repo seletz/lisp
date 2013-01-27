@@ -27,18 +27,50 @@ class Frame(object):
         self.env = kw
         logger.debug("NEW %r" % self)
 
+    def define(self, var):
+        """define(var) -> frame
+
+        Define a var.
+
+        >>> Frame().define("foo")
+        Frame<...>: parent=0 {'foo': None}
+
+        """
+        if var in self:
+            raise EvaluatorError("Duplicate define for var %s." % var)
+
+        return self.setf(var, None)
+
     def set(self, var, value):
         """set(var, value) -> frame
 
         Sets the var as holding the value given in this frame.  Returns
         the frame object itself for chaining.
 
-        >>> Frame().set("x", 1).set("y", 2)
-        Frame<...>: parent=0 {'y': 2, 'x': 1}
+        >>> Frame().define("y").set("y", 2)
+        Frame<...>: parent=0 {'y': 2}
 
         :returns: frame
         """
         logger.debug("Frame(%d).set: %s <= %r" % (id(self), var, value))
+        if var not in self:
+            raise EvaluatorError("var not defined: %s" % var)
+
+        return self.setf(var, value)
+
+    def setf(self, var, value):
+        """setf(var, value) -> frame
+
+        Force-sets the var as holding the value given in this frame.  Returns
+        the frame object itself for chaining.
+
+        >>> Frame().setf("x", 1).setf("y", 2)
+        Frame<...>: parent=0 {'y': 2, 'x': 1}
+
+        :returns: frame
+        """
+        logger.debug("Frame(%d).setf: %s <= %r" % (id(self), var, value))
+
         self.env[var] = value
         return self
 
@@ -56,6 +88,8 @@ class Frame(object):
 
         :returns: value
         """
+        if symbol_p(var):
+            var = var.name  # XXX: hmmm
         if var in self.env:
             value = self.env[var]
             logger.debug("Frame(%d).lookup: %s => %r" % (id(self), var, value))
@@ -84,8 +118,6 @@ class Frame(object):
 
         Returns or creates the global frame.
 
-        >>> Frame.GLOBALS is None
-        True
         >>> Frame.global_frame()
         Frame<...>: parent=... {...}
 
@@ -93,19 +125,27 @@ class Frame(object):
         """
         if not cls.GLOBALS:
             glob = cls.GLOBALS = Frame()
-            glob.set("car", car)
-            glob.set("cdr", cdr)
-            glob.set("cons", cons)
-            glob.set("list", list_f)
-            glob.set("number?", number_p)
-            glob.set("string?", string_p)
-            glob.set("list?", list_p)
-            glob.set("+", add_f)
-            glob.set("-", sub_f)
-            glob.set("*", mul_f)
-            glob.set("/", div_f)
+            glob.setf("car", car)
+            glob.setf("cdr", cdr)
+            glob.setf("cons", cons)
+            glob.setf("list", list_f)
+
+            glob.setf("number?", number_p)
+            glob.setf("string?", string_p)
+            glob.setf("list?", list_p)
+            glob.setf("bool?", bool_p)
+
+            glob.setf("+", add_f)
+            glob.setf("-", sub_f)
+            glob.setf("*", mul_f)
+            glob.setf("/", div_f)
+
+            glob.setf("x", 42)
 
         return cls.GLOBALS
+
+    def __contains__(self, k):
+        return k in self.env
 
     def __repr__(self):
         return "Frame<%d>: parent=%d %r" % (id(self), self.parent and id(self.parent) or 0, self.env)

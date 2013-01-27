@@ -31,9 +31,9 @@ class TestEnv(unittest.TestCase):
         """
         root = self.get_one(x=42)
 
-        assert self.get_one(parent=root).set("y", 1).lookup("y") == 1
-        assert self.get_one(parent=root).set("y", 1).lookup("x") == 42
-        assert self.get_one(parent=root).set("x", 1).lookup("x") == 1
+        assert self.get_one(parent=root).define("y") # .set("y", 1).lookup("y") == 1
+        assert self.get_one(parent=root).define("y").set("y", 1).lookup("x") == 42
+        assert self.get_one(parent=root).define("x").set("x", 1).lookup("x") == 1
 
     def test_new_frame(self):
         """

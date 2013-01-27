@@ -27,11 +27,11 @@ class TestEvaluator(unittest.TestCase):
         vars evaluate to their values.
         """
         env = Frame(a=42, b="foo")
-        assert lisp_eval("a", env) == 42
-        assert lisp_eval("b", env) == "foo"
+        assert lisp_eval(Symbol("a"), env) == 42
+        assert lisp_eval(Symbol("b"), env) == "foo"
 
         with self.assertRaises(EvaluatorError):
-            lisp_eval("x", env)
+            lisp_eval(Symbol("x"), env)
 
     def test_eval_list(self):
         import operator
@@ -79,6 +79,7 @@ class TestEvaluator(unittest.TestCase):
                 assert lisp_eval(sexp, env) == True
             with READ("(number? 3.5)") as sexp:
                 assert lisp_eval(sexp, env) == True
-
+            with READ("(string? \"foo\")") as sexp:
+                assert lisp_eval(sexp, env) == True
 # vim: set ft=python ts=4 sw=4 expandtab :
 

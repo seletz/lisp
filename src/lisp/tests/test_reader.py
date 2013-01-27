@@ -17,9 +17,11 @@ class TestRead(unittest.TestCase):
         assert lisp_read("a")     == Symbol("a")
         assert lisp_read("foo?")  == Symbol("foo?")
         assert lisp_read("*out*") == Symbol("*out*")
+        assert lisp_read("set!")  == Symbol("set!")
 
     def test_read_string(self):
         assert lisp_read("\"foo\"") == 'foo'
+        assert lisp_read("\" abc foo\"") == ' abc foo'
 
     def test_read_empty_list(self):
         assert lisp_read("()") == ()
