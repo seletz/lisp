@@ -87,7 +87,7 @@ class Frame(object):
         >>> Frame.GLOBALS is None
         True
         >>> Frame.global_frame()
-        Frame<...>: parent=0 {}
+        Frame<...>: parent=... {...}
 
         :returns: frame instance
         """
