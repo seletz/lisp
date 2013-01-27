@@ -33,5 +33,23 @@ class TestEnv(unittest.TestCase):
         assert self.get_one(parent=root).set("y", 1).lookup("x") == 42
         assert self.get_one(parent=root).set("x", 1).lookup("x") == 1
 
+    def test_new_frame(self):
+        """
+        test getting a new child frame.
+        """
+        root = self.get_one(x=42)
+        assert root.new_frame().parent
+        assert root.new_frame().parent == root
+        assert root.new_frame(x=43).lookup("x") == 43
+
+    def test_str(self):
+        """
+        """
+        root = self.get_one(x=42)
+        chld = root.new_frame()
+
+        assert str(root)
+        assert str(chld)
+
 # vim: set ft=python ts=4 sw=4 expandtab :
 
