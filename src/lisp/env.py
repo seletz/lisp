@@ -12,6 +12,7 @@ __version__   = '$Revision: $'[11:-2]
 import os
 import sys
 import logging
+import contextlib
 
 from exc import *
 
@@ -117,5 +118,26 @@ class Frame(object):
         if self.parent:
             out.append(str(self.parent))
         return "\n".join(out)
+
+
+@contextlib.contextmanager
+def environment(parent=None, **kw):
+    """environment
+
+    A context manager for environments:
+
+    >>> with environment(x=1) as env:
+    ...     print env.lookup("x")
+    1
+
+    """
+    if parent:
+        env = parent.new_frame(**kw)
+    else:
+        env = Frame(**kw)
+
+    yield env
+
+    del env
 
 # vim: set ft=python ts=4 sw=4 expandtab :

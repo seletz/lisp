@@ -1,7 +1,9 @@
 import unittest
 
 from  lisp.exc import *
-from  lisp.evaluator import *
+
+from  lisp.env import Frame
+from  lisp.env import environment
 
 
 class TestEnv(unittest.TestCase):
@@ -50,6 +52,16 @@ class TestEnv(unittest.TestCase):
 
         assert str(root)
         assert str(chld)
+
+    def test_context_mgr(self):
+        with environment(x=1) as env:
+            assert env.parent is None
+            assert env.lookup("x") == 1
+
+        with environment(parent=self.get_one(x=42), x=1) as env:
+            assert env.parent
+            assert env.lookup("x") == 1
+
 
 # vim: set ft=python ts=4 sw=4 expandtab :
 

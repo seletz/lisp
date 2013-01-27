@@ -19,6 +19,9 @@ from env import Frame
 logger = logging.getLogger("lisp.eval")
 
 
+def evaluate_list(sexp, env):
+    pass
+
 def lisp_eval(sexp, env=None):
     if not env:
         env = Frame.global_frame()
