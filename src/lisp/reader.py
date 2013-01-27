@@ -34,10 +34,6 @@ def read_symbol(token):
     logger.debug("read_symbol: %r" % token)
     return token
 
-class ReaderState(object):
-    def __init__(self):
-        self.stack = []
-
 def lisp_read(s, state=None):
     logger.debug("lisp_read: s=%r" % s)
 

@@ -21,3 +21,11 @@ class TestRead(unittest.TestCase):
     def test_read_list(self):
         assert lisp_read("(foo 1 2)") == ( "foo", 1, 2)
         assert lisp_read("(foo (1 2))") == ( "foo", (1, 2))
+
+    def test_unexpected_token(self):
+        with self.assertRaises(ReaderError):
+            lisp_read(".foo")
+
+    def test_unexpected_token(self):
+        with self.assertRaises(ReaderError):
+            lisp_read("(1 2 3")
