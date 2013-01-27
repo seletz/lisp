@@ -17,24 +17,18 @@ import logging
 from exc import ReaderError
 from exc import EvaluatorError
 
-from evaluator import Frame
+from env import Frame
+
 from evaluator import lisp_eval
 from reader import lisp_read
+from printer import lisp_print
 
 logger = logging.getLogger("lisp.lisp")
+
 
 def setup_logging(level=logging.DEBUG):
     logging.basicConfig(level=level, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
 
-
-def setup_env():
-    return {}
-
-def lisp_print(sexp):
-    if type(sexp) == types.TupleType:
-        return "( " + " ".join(map(lisp_print, sexp)) + " )"
-    else:
-        return str(sexp)
 
 def main():
     setup_logging()
