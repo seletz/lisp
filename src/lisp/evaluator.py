@@ -13,14 +13,24 @@ import sys
 import types
 import logging
 
-#from exc import EvaluatorError
+from exc import EvaluatorError
 from env import Frame
+from builtin import *
 
 logger = logging.getLogger("lisp.eval")
 
+__all__ = ["lisp_eval"]
 
-def evaluate_list(sexp, env):
-    pass
+
+def evaluate_list(lst, env):
+    logger.debug("evaluate_list(lst=%r" % repr(lst))
+
+    f = env.lookup(car(lst))
+    if not func_p(f):
+        raise EvaluatorError("the value of `%s` is not a function." % car(lst))
+
+    return f(*cdr(lst))
+
 
 def lisp_eval(sexp, env=None):
     if not env:

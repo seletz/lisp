@@ -1,7 +1,16 @@
 import unittest
+import contextlib
 
 from  lisp.exc import *
+from  lisp.env import *
+from  lisp.reader import *
 from  lisp.evaluator import *
+
+
+@contextlib.contextmanager
+def READ(s):
+    sexp = lisp_read(s)
+    yield sexp
 
 
 class TestEvaluator(unittest.TestCase):
@@ -23,6 +32,13 @@ class TestEvaluator(unittest.TestCase):
 
         with self.assertRaises(EvaluatorError):
             lisp_eval("x", env)
+
+    def test_eval_list(self):
+        import operator
+        with environment(func=operator.add) as env:
+            with READ("(func 1 2)") as sexp:
+                assert lisp_eval(sexp, env) == 3
+
 
 # vim: set ft=python ts=4 sw=4 expandtab :
 
