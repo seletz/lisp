@@ -26,15 +26,6 @@ RX_NUMBER = re.compile("^[+-]?(\d*\.?\d+|\d+\.?\d*)([eE][+-]?\d+)?$")
 RX_SYMBOL = re.compile("^(\w+)$")
 
 
-def read_list(tokens):
-    logger.debug("read_list: %r" % tokens)
-    sexp = []
-
-    sexp.append(lisp_read(tok))
-
-    logger.debug("read_list: => %r" % str(tuple(sexp)))
-    return tuple(sexp)
-
 def read_number(token):
     logger.debug("read_number: %r" % token)
     return ast.literal_eval(token)
