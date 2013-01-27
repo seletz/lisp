@@ -13,8 +13,11 @@ import logging
 from exc import *
 from builtin import *
 from reader import Symbol
+from evaluator import Lambda
 
 logger = logging.getLogger("lisp.print")
+
+lambda_p = lambda x: isinstance(x, Lambda)
 
 
 def print_number(n):
@@ -74,6 +77,10 @@ def print_func(s):
     assert func_p(s)
     return "#Func{" + repr(s) + "}"
 
+def print_lambda(s):
+    assert lambda_p(s)
+    return repr(s)
+
 def print_list(lst):
     """
     Lists are printed quoted and recuresively.
@@ -103,6 +110,8 @@ def lisp_print(sexp):
         return print_string(sexp)
     elif func_p(sexp):
         return print_func(sexp)
+    elif lambda_p(sexp):
+        return print_lambda(sexp)
     else:
         raise PrinterError("Don't know how to print: %r" % (type(sexp)))
 

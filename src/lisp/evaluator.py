@@ -24,6 +24,16 @@ logger = logging.getLogger("lisp.eval")
 
 __all__ = ["lisp_eval"]
 
+
+class Lambda(object):
+    def __init__(self, args, body, env):
+        self.args = args
+        self.body = body
+        self.env = env
+
+    def __repr__(self):
+        return "#Lambda{%d}" % id(self)
+
 def tagged_list(lst, tag):
     """tagged_list(lst, tag) -> boolean
 
@@ -60,7 +70,6 @@ def self_evaluating(exp):
     if string_p(exp):
         return True
     return False
-
 
 def evaluate_list(lst, env):
     return map(lambda x: lisp_eval(x, env), lst)
@@ -114,7 +123,16 @@ def evaluate_assignment(sexp, env):
     return "ok"
 
 def evaluate_lambda(sexp, env):
-    raise NotImplementedError()
+    """
+    (lambda (a b c) (+ a b c))
+    """
+    assert len(sexp) == 3
+    args   = sexp[1]
+    body   = sexp[2]
+
+    l = Lambda(args, body, env)
+    logger.debug("evaluate_lambda: => %r" % l)
+    return l
 
 def evaluate_if(sexp, env):
     raise NotImplementedError()
