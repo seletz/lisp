@@ -17,6 +17,9 @@ class TestRead(unittest.TestCase):
         assert lisp_read("foo?") == "foo?"
         assert lisp_read("*out*") == "*out*"
 
+    def test_read_string(self):
+        assert lisp_read("\"foo\"") == '"foo"'
+
     def test_read_empty_list(self):
         assert lisp_read("()") == ()
 
