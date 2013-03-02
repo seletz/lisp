@@ -88,6 +88,11 @@ class TestEvalLambda(unittest.TestCase):
             with READ("((lambda (a b) (* a b)) 2 3)") as sexp:
                 assert lisp_eval(sexp, env) == 6
 
+    def test_apply_2(self):
+        with environment() as env:
+            with READ("((lambda (a b) (* a b)) (+ 1 1) (+ 2 2))") as sexp:
+                assert lisp_eval(sexp, env) == 8
+
 class TestEvalApply(unittest.TestCase):
     def setUp(self):
         self.env = Frame.global_frame()

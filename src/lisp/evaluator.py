@@ -100,7 +100,7 @@ def evaluate_apply(lst, env):
         arg_names = [s.name for s in l.args]
         sub_env = env.new_frame()
         for nr, name in enumerate(arg_names):
-            v = evaluate_list(rest[nr], env)
+            v = lisp_eval(rest[nr], env)
             sub_env.setf(name, v)
         return lisp_eval(l.body, sub_env)
 
