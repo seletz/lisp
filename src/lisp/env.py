@@ -140,6 +140,12 @@ class Frame(object):
             glob.setf("and", all_f)
             glob.setf("or", some_f)
 
+            glob.setf("=", lambda a,b: a == b)
+            glob.setf(">", lambda a,b: a > b)
+            glob.setf("<", lambda a,b: a < b)
+            glob.setf("<=", lambda a,b: a <= b)
+            glob.setf(">=", lambda a,b: a >= b)
+
             glob.setf("+", add_f)
             glob.setf("-", sub_f)
             glob.setf("*", mul_f)
