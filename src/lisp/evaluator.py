@@ -69,6 +69,8 @@ def self_evaluating(exp):
         return True
     if string_p(exp):
         return True
+    if bool_p(exp):
+        return True
     return False
 
 def evaluate_list(lst, env):
