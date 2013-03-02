@@ -134,6 +134,11 @@ class Frame(object):
             glob.setf("string?", string_p)
             glob.setf("list?", list_p)
             glob.setf("bool?", bool_p)
+            glob.setf("even?", even_p)
+            glob.setf("odd?", even_p)
+
+            glob.setf("and", all_f)
+            glob.setf("or", some_f)
 
             glob.setf("+", add_f)
             glob.setf("-", sub_f)

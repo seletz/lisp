@@ -104,5 +104,20 @@ class TestEvalApply(unittest.TestCase):
             with READ("(func 2 3)") as sexp:
                 assert lisp_eval(sexp, env) == 6
 
+class TestIf(unittest.TestCase):
+    def setUp(self):
+        self.env = Frame.global_frame()
+        self.env.setf("a", 2)
+        self.env.setf("b", 3)
+
+    def test_apply(self):
+        with environment(parent=self.env) as env:
+            with READ("(if (even? a) #t #f)") as sexp:
+                assert lisp_eval(sexp, env) == True
+            with READ("(if (even? b) #t #f)") as sexp:
+                assert lisp_eval(sexp, env) == False
+            with READ("(if (odd? (+ a b)) (+ a b) (- a b))") as sexp:
+                assert lisp_eval(sexp, env) == 5
+
 # vim: set ft=python ts=4 sw=4 expandtab :
 

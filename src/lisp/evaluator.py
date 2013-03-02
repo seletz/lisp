@@ -158,7 +158,19 @@ def evaluate_begin(sexp, env):
     raise NotImplementedError()
 
 def evaluate_if(sexp, env):
-    raise NotImplementedError()
+    """
+    (if pred conseq alternative)
+    """
+    assert len(sexp) == 4
+    pred = sexp[1]
+    cons = sexp[2]
+    alt  = sexp[3]
+
+    pred_val = lisp_eval(pred)
+    if true_p(pred_val):
+        return lisp_eval(cons)
+    else:
+        return lisp_eval(alt)
 
 def evaluate_cond(sexp, env):
     raise NotImplementedError()
