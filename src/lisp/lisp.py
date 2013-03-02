@@ -29,6 +29,10 @@ logger = logging.getLogger("lisp.lisp")
 def setup_logging(level=logging.DEBUG):
     logging.basicConfig(level=level, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
 
+    logging.getLogger("lisp.reader").setLevel(logging.INFO)
+    logging.getLogger("lisp.env").setLevel(logging.INFO)
+    logging.getLogger("lisp.tokenize").setLevel(logging.INFO)
+
 
 def eval(s, env=None):
     if not env:

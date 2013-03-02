@@ -72,6 +72,7 @@ def self_evaluating(exp):
     return False
 
 def evaluate_list(lst, env):
+    logger.debug("evaluate_list: lst=%r env=%r" %(lst, env))
     if not list_p(lst):
         return lisp_eval(lst, env)
     return map(lambda x: lisp_eval(x, env), lst)
@@ -81,7 +82,7 @@ def evaluate_primitive(f, args, env):
     return f(*evaluate_list(args, env))
 
 def evaluate_apply(lst, env):
-    logger.debug("evaluate_apply(lst=%r" % repr(lst))
+    logger.debug("evaluate_apply(lst=%r)" % repr(lst))
 
     first = car(lst)
     rest  = cdr(lst)
