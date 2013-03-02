@@ -101,7 +101,7 @@ class Frame(object):
 
         print "Lookup Error. Frame dump (innermost first):"
         print self
-        raise EvaluatorError("lookup of var '%s' failed." % var)
+        raise EvaluatorError("lookup of var '%s' failed." % (var,))
 
     def new_frame(self, **kw):
         """new_frame() -> object

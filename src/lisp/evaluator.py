@@ -72,12 +72,13 @@ def self_evaluating(exp):
     return False
 
 def evaluate_list(lst, env):
+    if not list_p(lst):
+        return lisp_eval(lst, env)
     return map(lambda x: lisp_eval(x, env), lst)
 
 def evaluate_primitive(f, args, env):
     logger.debug("evaluate_primitive: f=%r" % f)
     return f(*evaluate_list(args, env))
-
 
 def evaluate_apply(lst, env):
     logger.debug("evaluate_apply(lst=%r" % repr(lst))
@@ -85,9 +86,25 @@ def evaluate_apply(lst, env):
     first = car(lst)
     rest  = cdr(lst)
 
-    func = env.lookup(first)
-    if func_p(func):
-        return evaluate_primitive(func, rest, env)
+    if list_p(first):
+        value = lisp_eval(first, env)
+    elif symbol_p(first):
+        value = env.lookup(first)
+    else:
+        raise EvaluatorError("apply: the CAR of the expression is neither a list nor symbol.")
+
+    if isinstance(value, Lambda):
+        l = value
+        assert len(l.args) == len(rest), "Argument length mismatch: %r" % l
+        arg_names = [s.name for s in l.args]
+        sub_env = env.new_frame()
+        for nr, name in enumerate(arg_names):
+            v = evaluate_list(rest[nr], env)
+            sub_env.setf(name, v)
+        return lisp_eval(l.body, sub_env)
+
+    if func_p(value):
+        return evaluate_primitive(value, rest, env)
 
     raise EvaluatorError("the value of `%s` is not a function." % first)
 
@@ -133,6 +150,9 @@ def evaluate_lambda(sexp, env):
     l = Lambda(args, body, env)
     logger.debug("evaluate_lambda: => %r" % l)
     return l
+
+def evaluate_begin(sexp, env):
+    raise NotImplementedError()
 
 def evaluate_if(sexp, env):
     raise NotImplementedError()

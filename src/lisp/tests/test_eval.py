@@ -81,5 +81,23 @@ class TestEvaluator(unittest.TestCase):
                 assert lisp_eval(sexp, env) == True
             with READ("(string? \"foo\")") as sexp:
                 assert lisp_eval(sexp, env) == True
+
+class TestEvalLambda(unittest.TestCase):
+    def test_apply(self):
+        with environment() as env:
+            with READ("((lambda (a b) (* a b)) 2 3)") as sexp:
+                assert lisp_eval(sexp, env) == 6
+
+class TestEvalApply(unittest.TestCase):
+    def setUp(self):
+        self.env = Frame.global_frame()
+        with READ("(define func (lambda (a b) (* a b)))") as sexp:
+            lisp_eval(sexp, self.env)
+
+    def test_apply(self):
+        with environment(parent=self.env) as env:
+            with READ("(func 2 3)") as sexp:
+                assert lisp_eval(sexp, env) == 6
+
 # vim: set ft=python ts=4 sw=4 expandtab :
 
