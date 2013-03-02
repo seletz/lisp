@@ -32,8 +32,8 @@ class Frame(object):
 
         Define a var.
 
-        >>> Frame().define("foo")
-        Frame<...>: parent=0 {'foo': None}
+        >>> Frame(parent=Frame.global_frame()).define("foo")
+        Frame<...>: parent=... {'foo': None}
 
         """
         if var in self:
@@ -47,8 +47,8 @@ class Frame(object):
         Sets the var as holding the value given in this frame.  Returns
         the frame object itself for chaining.
 
-        >>> Frame().define("y").set("y", 2)
-        Frame<...>: parent=0 {'y': 2}
+        >>> Frame(parent=Frame.global_frame()).define("y").set("y", 2)
+        Frame<...>: parent=... {'y': 2}
 
         :returns: frame
         """
@@ -64,8 +64,8 @@ class Frame(object):
         Force-sets the var as holding the value given in this frame.  Returns
         the frame object itself for chaining.
 
-        >>> Frame().setf("x", 1).setf("y", 2)
-        Frame<...>: parent=0 {'y': 2, 'x': 1}
+        >>> Frame(parent=Frame.global_frame()).setf("x", 1).setf("y", 2)
+        Frame<...>: parent=... {'y': 2, 'x': 1}
 
         :returns: frame
         """
@@ -119,7 +119,7 @@ class Frame(object):
         Returns or creates the global frame.
 
         >>> Frame.global_frame()
-        Frame<...>: parent=... {...}
+        Frame<...>: parent=0
 
         :returns: frame instance
         """
@@ -153,7 +153,10 @@ class Frame(object):
         return k in self.env
 
     def __repr__(self):
-        return "Frame<%d>: parent=%d %r" % (id(self), self.parent and id(self.parent) or 0, self.env)
+        if self.parent:
+            return "Frame<%d>: parent=%d %r" % (id(self), id(self.parent), self.env)
+        else:
+            return "Frame<%d>: parent=%d" % (id(self), 0)
 
     def __str__(self):
         """
@@ -162,13 +165,13 @@ class Frame(object):
         Returns a string representing a frame stack:
 
         >>> print Frame()
-        Frame<...>: parent=0 {}
+        Frame<...>: parent=0
 
         If the frame has parent frames, they're all visited recursively:
 
         >>> print Frame(x=42).new_frame(y=1)
         Frame<...>: parent=... {'y': 1}
-        Frame<...>: parent=0 {'x': 42}
+        Frame<...>: parent=0
 
         """
         out = []
