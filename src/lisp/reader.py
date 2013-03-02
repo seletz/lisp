@@ -27,7 +27,7 @@ logger = logging.getLogger("lisp.reader")
 
 RX_NUMBER = re.compile("^[+-]?(\d*\.?\d+|\d+\.?\d*)([eE][+-]?\d+)?$")
 RX_STRING = re.compile('^"(.*?)"$')
-RX_SYMBOL = re.compile("^([a-zA-Z0-9+-:$\*\?!]+)$")
+RX_SYMBOL = re.compile("^([a-zA-Z0-9+-<>=:$\*\?!]+)$")
 
 
 class Symbol(object):
@@ -38,7 +38,7 @@ class Symbol(object):
         return self.name == other.name
 
     def __repr__(self):
-        return "#Symbol{" + self.name + "}"
+        return "'" + self.name
 
 
 def read_number(token):

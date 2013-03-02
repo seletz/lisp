@@ -12,6 +12,7 @@ import os
 import sys
 import types
 import logging
+import functools
 
 from exc import EvaluatorError
 from env import Frame
@@ -23,6 +24,18 @@ from builtin import *
 logger = logging.getLogger("lisp.eval")
 
 __all__ = ["lisp_eval"]
+
+def log_return(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kw):
+        try:
+            val = f(*args, **kw)
+            logger.debug("*** %s => %r" % (f.func_name, val))
+            return val
+        except:
+            logger.error("Exception in %s" % (f.func_name))
+            raise
+    return decorated_function
 
 
 class Lambda(object):
@@ -83,6 +96,7 @@ def evaluate_primitive(f, args, env):
     logger.debug("evaluate_primitive: f=%r" % f)
     return f(*evaluate_list(args, env))
 
+@log_return
 def evaluate_apply(lst, env):
     logger.debug("evaluate_apply(lst=%r)" % repr(lst))
 
@@ -120,7 +134,10 @@ def evaluate_quote(sexp):
         return q
 
 def evaluate_define(sexp, env):
-    assert len(sexp) == 3
+    """
+    (define symbol expr)
+    """
+    assert len(sexp) == 3, "define deeds a symbol and a expression"
     symbol = sexp[1]
     rest = sexp[2]
 
@@ -132,7 +149,10 @@ def evaluate_define(sexp, env):
     return "ok"
 
 def evaluate_assignment(sexp, env):
-    assert len(sexp) == 3
+    """
+    (set! x expr)
+    """
+    assert len(sexp) == 3, "set! needs a symbol and a expression"
     symbol = sexp[1]
     rest = sexp[2]
 
@@ -142,38 +162,72 @@ def evaluate_assignment(sexp, env):
 
     return "ok"
 
+@log_return
 def evaluate_lambda(sexp, env):
     """
     (lambda (a b c) (+ a b c))
     """
-    assert len(sexp) == 3
+    assert len(sexp) == 3, "lambda form needs a argument list and a body"
     args   = sexp[1]
     body   = sexp[2]
 
-    l = Lambda(args, body, env)
+    l = Lambda(args, body, env)  # XXX: need to clone env for real closure
     logger.debug("evaluate_lambda: => %r" % l)
     return l
 
+@log_return
 def evaluate_begin(sexp, env):
-    raise NotImplementedError()
+    """
+    (begin expr expr expr ...)
+    """
+    values = map(lambda expr: lisp_eval(expr, env), cdr(sexp))
+    return values[-1]
 
+@log_return
 def evaluate_if(sexp, env):
     """
     (if pred conseq alternative)
     """
-    assert len(sexp) == 4
+    assert len(sexp) >= 3, "if form needs a predicate, a consequence and one optional alternative"
     pred = sexp[1]
     cons = sexp[2]
-    alt  = sexp[3]
-
-    pred_val = lisp_eval(pred)
-    if true_p(pred_val):
-        return lisp_eval(cons)
+    if len(sexp) == 4:
+        alt  = sexp[3]
     else:
-        return lisp_eval(alt)
+        alt = None
 
+    pred_val = lisp_eval(pred, env)
+    if true_p(pred_val):
+        return lisp_eval(cons, env)
+    else:
+        if alt:
+            return lisp_eval(alt, env)
+
+    return False
+
+@log_return
 def evaluate_cond(sexp, env):
-    raise NotImplementedError()
+    """
+    (cond
+        (pred1 expr expr ...)
+        (pred2 expr expr ...)
+        ...
+        (else  expr expr ...)
+        )
+    """
+    logger.debug("evaluate_cond: sexp=%r, env=%r" % (sexp, env))
+    assert len(sexp) > 1, "cond with no clauses?"
+    clauses = sexp[1:]
+
+    for clause in clauses:
+        pred = car(clause)
+        expressions = cdr(clause)
+        if symbol_p(pred) and pred.name == "else":
+            return map(lambda expr: lisp_eval(expr, env), expressions)[-1]
+
+        if true_p(lisp_eval(pred, env)):
+            return map(lambda expr: lisp_eval(expr, env), expressions)[-1]
+
 
 def quoted_p(sexp):
     return tagged_list(sexp, "quote")

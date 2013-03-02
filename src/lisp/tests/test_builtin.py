@@ -39,6 +39,9 @@ class TestBuiltins(unittest.TestCase):
 
         assert symbol_p(Symbol("a"))
 
+        assert odd_p(3) == True
+        assert even_p(2) == True
+
     def test_reducers(self):
         assert add_f(1,2,3) == 6
         assert sub_f(1,2,3) == -4

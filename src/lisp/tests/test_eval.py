@@ -110,7 +110,7 @@ class TestIf(unittest.TestCase):
         self.env.setf("a", 2)
         self.env.setf("b", 3)
 
-    def test_apply(self):
+    def test_if(self):
         with environment(parent=self.env) as env:
             with READ("(if (even? a) #t #f)") as sexp:
                 assert lisp_eval(sexp, env) == True
@@ -118,6 +118,54 @@ class TestIf(unittest.TestCase):
                 assert lisp_eval(sexp, env) == False
             with READ("(if (odd? (+ a b)) (+ a b) (- a b))") as sexp:
                 assert lisp_eval(sexp, env) == 5
+            with READ("(if (odd? (+ a b)) (+ a b))") as sexp:
+                assert lisp_eval(sexp, env) == 5
+
+class TestBegin(unittest.TestCase):
+    def setUp(self):
+        self.env = Frame.global_frame()
+        self.env.setf("a", 2)
+        self.env.setf("b", 3)
+
+    def test_begin(self):
+        with environment(parent=self.env) as env:
+            with READ("""
+                (begin
+                    (+ a b)
+                    (- a b)
+                    (* a b))
+             """) as sexp:
+                assert lisp_eval(sexp, env) == 6
+
+class TestCond(unittest.TestCase):
+    def setUp(self):
+        self.env = Frame.global_frame()
+        self.env.setf("a", 2)
+        self.env.setf("b", 3)
+
+    def test_begin(self):
+        with environment(parent=self.env) as env:
+            with READ("""
+                (cond
+                    ((= a b) 0)
+                    ((< a b) 1)
+                    ((> a b) 1 2 3 4))
+             """) as sexp:
+                assert lisp_eval(sexp, env) == 1
+            with READ("""
+                (cond
+                    ((= a b) 0)
+                    ((> a b) 1)
+                    ((< a b) 1 2 3 4))
+             """) as sexp:
+                assert lisp_eval(sexp, env) == 4
+            with READ("""
+                (cond
+                    ((= a b) 0)
+                    ((< a b) 1)
+                    (else 3)
+             """) as sexp:
+                assert lisp_eval(sexp, env) == 3
 
 # vim: set ft=python ts=4 sw=4 expandtab :
 
