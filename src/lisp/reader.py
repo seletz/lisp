@@ -25,11 +25,6 @@ from tokenizer import *
 logger = logging.getLogger("lisp.reader")
 
 
-RX_NUMBER = re.compile("^[+-]?(\d*\.?\d+|\d+\.?\d*)([eE][+-]?\d+)?$")
-RX_STRING = re.compile('^"(.*?)"$')
-RX_SYMBOL = re.compile("^([a-zA-Z0-9+-<>=:$\*\?!]+)$")
-
-
 class Symbol(object):
     def __init__(self, name):
         self.name = name
@@ -41,19 +36,19 @@ class Symbol(object):
         return "'" + self.name
 
 
-def read_number(token):
-    logger.debug("read_number: %r" % token)
-    return ast.literal_eval(token)
+def read_number(value):
+    logger.debug("read_number: %r" % value)
+    return ast.literal_eval(value)
 
 
-def read_symbol(token):
-    logger.debug("read_symbol: %r" % token)
-    return Symbol(token)
+def read_symbol(value):
+    logger.debug("read_symbol: %r" % value)
+    return Symbol(value)
 
 
-def read_string(token):
-    logger.debug("read_string: %r" % token)
-    return RX_STRING.match(token).groups()[0]
+def read_string(value):
+    logger.debug("read_string: %r" % value)
+    return value
 
 
 def lisp_read(s, state=None):
@@ -68,7 +63,7 @@ def lisp_read(s, state=None):
 
     sexp = []
 
-    for tok in tokenize(s):
+    for tok, value in tokenize(s):
         if tok == TOK_PAREN_OPEN:
             subexp = []
             stack.append(sexp)
@@ -83,20 +78,22 @@ def lisp_read(s, state=None):
             sexp = tmp
             logger.debug("lisp_read: pop => %r" % sexp)
 
-        elif RX_NUMBER.match(tok):
-            sexp.append(read_number(tok))
+        elif tok == TOK_NUMBER:
+            sexp.append(read_number(value))
 
-        elif RX_SYMBOL.match(tok):
-            sexp.append(read_symbol(tok))
+        elif tok == TOK_SYMBOL:
+            sexp.append(read_symbol(value))
 
-        elif RX_STRING.match(tok):
-            sexp.append(read_string(tok))
+        elif tok == TOK_STRING:
+            sexp.append(read_string(value))
 
-        elif tok.lower() == "#t":
-            sexp.append(True)
-
-        elif tok.lower() == "#f":
-            sexp.append(False)
+        elif tok == TOK_UNKNOWN:
+            if value.lower() == "#t":
+                sexp.append(True)
+            elif value.lower() == "#f":
+                sexp.append(False)
+            else:
+                raise ReaderError("unknown token: %s value %r" % (tok, value))
 
         else:
             raise ReaderError("unexpected token: %r" % tok)
