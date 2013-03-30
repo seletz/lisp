@@ -13,6 +13,25 @@ def READ(s):
     yield sexp
 
 
+@contextlib.contextmanager
+def ENV(env=None, **kw):
+    if env is None:
+        env = Frame.global_frame()
+
+    for k, v in kw.items():
+        value = lisp_eval(lisp_read(v), env)
+        print "%s <- %r %r" % (k, value, type(value))
+        env.setf(k, value)
+
+    yield env
+
+@contextlib.contextmanager
+def EVAL(s, **kw):
+    with READ(s) as sexp:
+        print "SEXP: ", sexp
+        with ENV(**kw) as env:
+            yield lisp_eval(sexp, env)
+
 class TestEvaluator(unittest.TestCase):
 
     def test_eval_number(self):
@@ -166,6 +185,36 @@ class TestCond(unittest.TestCase):
                     (else 3))
              """) as sexp:
                 assert lisp_eval(sexp, env) == 3
+
+class TestAssign(unittest.TestCase):
+    def test_set(self):
+        with EVAL("""
+        (begin
+            (set! x 42)
+            x
+        )
+        """, x="7") as result:
+            assert result == 42
+
+class TestRecursiveFunction(unittest.TestCase):
+    def test_sum(self):
+        with EVAL("""
+            (+ a b)
+        """, a="2", b="(+ 1 1)") as result:
+            assert result == 4
+    def test_fac(self):
+        with EVAL("""
+        (begin
+            (define fac (lambda (n)
+                (cond
+                    ((< n 1) 0)
+                    ((= n 1) 1)
+                    (else (* n (fac (- n 1)))))
+            ))
+            (fac 5)
+        )
+        """) as result:
+            assert result == 120
 
 # vim: set ft=python ts=4 sw=4 expandtab :
 

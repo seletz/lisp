@@ -174,20 +174,21 @@ def tokenize(s):
     if state.is_string:
         raise TokenizerException("unexpected EOF: unterminated string.", state)
 
-    if state.is_symbol:
-        raise TokenizerException("unexpected EOF: symbol prematurely ended", state)
+    # XXX: can this happen?
+    #if state.is_symbol:
+        #raise TokenizerException("unexpected EOF: symbol prematurely ended", state)
 
 
-if __name__ == '__main__':
-    from pprint import pprint
-    logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
-    logger.setLevel(logging.DEBUG)
-    while True:
-        try:
-            s = raw_input(">>> ")
-            pprint(tuple(tokenize(s)))
-        except TokenizerException, e:
-            pprint("Exception: %s state: %r" % (e.message, e.state))
+#if __name__ == '__main__':
+    #from pprint import pprint
+    #logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
+    #logger.setLevel(logging.DEBUG)
+    #while True:
+        #try:
+            #s = raw_input(">>> ")
+            #pprint(tuple(tokenize(s)))
+        #except TokenizerException, e:
+            #pprint("Exception: %s state: %r" % (e.message, e.state))
 
 
 # vim: set ft=python ts=4 sw=4 expandtab :

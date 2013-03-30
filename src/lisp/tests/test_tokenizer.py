@@ -22,3 +22,14 @@ class TestTokenizer(unittest.TestCase):
         tokens = list(tokenize('\\t'))
         assert tokens[0][0] == TOK_CHAR
         assert tokens[0][1] == '\t'
+
+    def test_tok_quote(self):
+        tokens = list(tokenize('\''))
+        assert tokens[0][0] == TOK_QUOTE
+        assert tokens[0][1] == '\''
+
+    def test_str_eof(self):
+        with self.assertRaises(TokenizerException):
+            list(tokenize("\"unclosed string"))
+
+# vim: set ft=python ts=4 sw=4 expandtab :
