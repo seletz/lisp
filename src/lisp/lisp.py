@@ -26,12 +26,14 @@ from printer import lisp_print
 logger = logging.getLogger("lisp.lisp")
 
 
-def setup_logging(level=logging.DEBUG):
+def setup_logging(level=logging.INFO):
     logging.basicConfig(level=level, format="%(asctime)s [%(levelname)-7s] [line %(lineno)d] %(name)s: %(message)s")
 
-    logging.getLogger("lisp.reader").setLevel(logging.INFO)
-    logging.getLogger("lisp.env").setLevel(logging.INFO)
-    logging.getLogger("lisp.tokenize").setLevel(logging.INFO)
+    #logging.getLogger("lisp.reader").setLevel(logging.INFO)
+    #logging.getLogger("lisp.env").setLevel(logging.INFO)
+    #logging.getLogger("lisp.tokenize").setLevel(logging.INFO)
+    #logging.getLogger("lisp.eval").setLevel(logging.INFO)
+    #logging.getLogger("lisp.eval").setLevel(logging.INFO)
 
 
 def eval(s, env=None):
@@ -39,11 +41,8 @@ def eval(s, env=None):
         env = Frame.global_frame()
 
     sexp = lisp_read(s)
-    print "RD: " + repr(sexp)
     sexp = lisp_eval(sexp, env)
-    print "EV: " + repr(sexp)
     s = lisp_print(sexp)
-    print "PP: " + s
     return s
 
 
