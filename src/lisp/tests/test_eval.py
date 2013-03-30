@@ -162,8 +162,8 @@ class TestCond(unittest.TestCase):
             with READ("""
                 (cond
                     ((= a b) 0)
-                    ((< a b) 1)
-                    (else 3)
+                    ((> a b) 1)
+                    (else 3))
              """) as sexp:
                 assert lisp_eval(sexp, env) == 3
 

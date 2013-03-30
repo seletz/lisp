@@ -16,9 +16,9 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tok_string(self):
         assert list(tokenize('("foo")')) == [(TOK_PAREN_OPEN, "("), (TOK_STRING, "foo"), (TOK_PAREN_CLOSE, ")")]
-        assert list(tokenize('("\"hello\"")')) == [(TOK_PAREN_OPEN, "("), (TOK_STRING, '"hello"'), (TOK_PAREN_CLOSE, ")")]
+        assert list(tokenize('("\\"hello\\"")')) == [(TOK_PAREN_OPEN, "("), (TOK_STRING, '"hello"'), (TOK_PAREN_CLOSE, ")")]
 
     def test_tok_char(self):
-        tokens = list(tokenize('\t'))
+        tokens = list(tokenize('\\t'))
         assert tokens[0][0] == TOK_CHAR
         assert tokens[0][1] == '\t'
