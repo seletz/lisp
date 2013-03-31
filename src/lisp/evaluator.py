@@ -40,6 +40,8 @@ def log_return(f):
 
 class Lambda(object):
     def __init__(self, args, body, env):
+        if args is None:
+            args = []
         self.args = args
         self.body = body
         self.env = env
@@ -112,6 +114,8 @@ def evaluate_apply(lst, env):
 
     if isinstance(value, Lambda):
         l = value
+        if rest is None:
+            rest = ()
         assert len(l.args) == len(rest), "Argument length mismatch: %r" % l
         arg_names = [s.name for s in l.args]
         sub_env = env.new_frame()
