@@ -136,15 +136,28 @@ def evaluate_quote(sexp):
 def evaluate_define(sexp, env):
     """
     (define symbol expr)
+    or
+    (define (name args..) body)
     """
-    assert len(sexp) == 3, "define deeds a symbol and a expression"
-    symbol = sexp[1]
-    rest = sexp[2]
+    assert len(sexp) == 3, "define needs a symbol and a expression"
 
-    logger.debug("evaluate_define: %r %r" % (repr(symbol), repr(rest)))
+    value = None
+    if symbol_p(sexp[1]):
+        symbol = sexp[1]
+        rest = sexp[2]
+        logger.debug("evaluate_define: %r %r" % (repr(symbol), repr(rest)))
+        value = lisp_eval(rest, env)
+
+    elif list_p(sexp[1]):
+        symbol = car(sexp[1])
+        args = cdr(sexp[1])
+        body = sexp[2]
+        value = evaluate_lambda(("lambda", args, body), env)
+    else:
+        raise EvaluatorError("define: need (define name expr) or (define (name args..) body)")
 
     env.define(symbol.name)
-    env.set(symbol.name, lisp_eval(rest, env))
+    env.set(symbol.name, value)
 
     return "ok"
 

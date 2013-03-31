@@ -216,5 +216,17 @@ class TestRecursiveFunction(unittest.TestCase):
         """) as result:
             assert result == 120
 
+class TestProcDefine(unittest.TestCase):
+    def test_proc(self):
+        """SICP page 12"""
+        with EVAL("""
+        (begin
+            (define (square x) (* x x))
+            (square 5)
+        )
+        """) as result:
+            assert result == 25
+
+
 # vim: set ft=python ts=4 sw=4 expandtab :
 
