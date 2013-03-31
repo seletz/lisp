@@ -13,6 +13,7 @@ import os
 import sys
 import types
 import logging
+import pdb, sys, traceback
 
 from exc import ReaderError
 from exc import EvaluatorError
@@ -36,11 +37,10 @@ def setup_logging(level=logging.INFO):
     #logging.getLogger("lisp.eval").setLevel(logging.INFO)
 
 
-def eval(s, env=None):
+def eval(sexp, env=None):
     if not env:
         env = Frame.global_frame()
 
-    sexp = lisp_read(s)
     sexp = lisp_eval(sexp, env)
     s = lisp_print(sexp)
     return s
@@ -50,16 +50,30 @@ def main():
     setup_logging()
     environment = Frame.global_frame()
     while True:
+        inp = ""
+        prompt = ">>> "
+        complete = False
+        while not complete:
+            try:
+                inp = inp + raw_input(prompt)
+            except EOFError:
+                break
+
+            try:
+                sexp = lisp_read(inp)
+                complete = True
+            except ReaderError, e:
+                prompt = "... "
+
+        if sexp is None:
+            continue
+
         try:
-            inp = raw_input(">>> ")
-        except EOFError:
-            break
-        try:
-            print eval(inp, environment)
-        except ReaderError, e:
-            print "reader error: " + str(e)
+            print eval(sexp, environment)
         except EvaluatorError, e:
             print "error evaluating: " + str(e)
+            print "sexp:", sexp
+            pdb.post_mortem()
 
 if __name__ == '__main__':
     main()

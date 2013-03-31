@@ -101,7 +101,10 @@ def lisp_read(s, state=None):
     if stack:
         raise ReaderError("missing close paren")
 
-    logger.debug("lisp_read: => %r" % str(sexp[0]))
-    return sexp[0]
+    logger.debug("lisp_read: => %r" % sexp)
+    if len(sexp):
+        return sexp[0]
+
+    return None
 
 # vim: set ft=python ts=4 sw=4 expandtab :
