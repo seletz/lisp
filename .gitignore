@@ -2,3 +2,4 @@ profile_default
 .coverage
 dist
 build
+.ipython
