@@ -51,9 +51,11 @@ def some_f(*args):
 def add_f(*args):
     return operator.add
 
-@reduced
 def sub_f(*args):
-    return operator.sub
+    if len(args) == 1:
+        return -args[0]
+    else:
+        return reduce(operator.sub, args)
 
 @reduced
 def mul_f(*args):

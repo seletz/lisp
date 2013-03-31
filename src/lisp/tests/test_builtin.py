@@ -48,5 +48,11 @@ class TestBuiltins(unittest.TestCase):
         assert mul_f(1,2,3,4) == 24
         assert div_f(4.0,2,2) == 1
 
+    def test_unary_reducer(self):
+        assert add_f(1) == 1
+        assert sub_f(1) == -1
+        assert mul_f(1) == 1
+        assert div_f(1) == 1
+
 # vim: set ft=python ts=4 sw=4 expandtab :
 
