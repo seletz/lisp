@@ -49,7 +49,9 @@ def eval(sexp, env=None):
 def main():
     setup_logging()
     environment = Frame.global_frame()
-    while True:
+    intr = 0
+    should_stop = False
+    while not should_stop:
         inp = ""
         prompt = ">>> "
         complete = False
@@ -58,6 +60,12 @@ def main():
                 inp = inp + raw_input(prompt)
             except EOFError:
                 break
+            except KeyboardInterrupt:
+                inp = ""
+                print "INTR", intr
+                if intr:
+                    should_stop = True
+                intr += 1
 
             try:
                 sexp = lisp_read(inp)
@@ -70,8 +78,13 @@ def main():
 
         try:
             print eval(sexp, environment)
+            intr = 0
         except EvaluatorError, e:
             print "error evaluating: " + str(e)
+            print "sexp:", sexp
+            pdb.post_mortem()
+        except Exception, e:
+            print "exception: " + repr(e)
             print "sexp:", sexp
             pdb.post_mortem()
 
