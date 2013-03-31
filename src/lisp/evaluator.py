@@ -241,6 +241,35 @@ def evaluate_cond(sexp, env):
         if true_p(lisp_eval(pred, env)):
             return map(lambda expr: lisp_eval(expr, env), expressions)[-1]
 
+@log_return
+def evaluate_or(sexp, env):
+    """
+    (or expr1 expr2 ...)
+    """
+    logger.debug("evaluate_or: sexp=%r, env=%r" % (sexp, env))
+    if len(sexp) <= 1: raise EvaluatorError("empty or")
+
+    for expr in cdr(sexp):
+        value = lisp_eval(expr, env)
+        if true_p(value):
+            return value
+
+    return value
+
+@log_return
+def evaluate_and(sexp, env):
+    """
+    (and expr1 expr2 ...)
+    """
+    logger.debug("evaluate_and: sexp=%r, env=%r" % (sexp, env))
+    if len(sexp) <= 1: raise EvaluatorError("empty and")
+
+    for expr in cdr(sexp):
+        value = lisp_eval(expr, env)
+        if false_p(value):
+            return value
+
+    return value
 
 def quoted_p(sexp):
     return tagged_list(sexp, "quote")
@@ -263,6 +292,11 @@ def cond_p(sexp):
 def begin_p(sexp):
     return tagged_list(sexp, "begin")
 
+def or_p(sexp):
+    return tagged_list(sexp, "or")
+
+def and_p(sexp):
+    return tagged_list(sexp, "and")
 
 def lisp_eval(sexp, env=None):
     logger.debug("eval: sexp=%r env=%r" % (sexp, env))
@@ -296,6 +330,12 @@ def lisp_eval(sexp, env=None):
 
     elif begin_p(sexp):
         return evaluate_begin(sexp, env)
+
+    elif or_p(sexp):
+        return evaluate_or(sexp, env)
+
+    elif and_p(sexp):
+        return evaluate_and(sexp, env)
 
     elif list_p(sexp):
         return evaluate_apply(sexp, env)

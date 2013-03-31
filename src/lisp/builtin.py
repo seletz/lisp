@@ -40,14 +40,6 @@ def reduced(f):
     return decorated_function
 
 @reduced
-def all_f(*args):
-    return operator.and_
-
-@reduced
-def some_f(*args):
-    return operator.or_
-
-@reduced
 def add_f(*args):
     return operator.add
 

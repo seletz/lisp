@@ -92,6 +92,24 @@ class TestEvaluator(unittest.TestCase):
             with READ("(* 1 (* 2 2))") as sexp:
                 assert lisp_eval(sexp, env) == 4
 
+    def test_eval_builtin_and(self):
+        with environment() as env:
+            with READ("(and #t #t #t)") as sexp:
+                assert lisp_eval(sexp, env) == True
+            with READ("(and #t #t #f)") as sexp:
+                assert lisp_eval(sexp, env) == False
+            with READ("(and #f not-evaluated)") as sexp:
+                assert lisp_eval(sexp, env) == False
+
+    def test_eval_builtin_or(self):
+        with environment() as env:
+            with READ("(or #t #t #t)") as sexp:
+                assert lisp_eval(sexp, env) == True
+            with READ("(or #t #f #f)") as sexp:
+                assert lisp_eval(sexp, env) == True
+            with READ("(or #f #t not-evaluated)") as sexp:
+                assert lisp_eval(sexp, env) == True
+
     def test_eval_predicates(self):
         with environment() as env:
             with READ("(number? 3)") as sexp:
