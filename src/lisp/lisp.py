@@ -21,7 +21,7 @@ from exc import EvaluatorError
 from env import Frame
 
 from evaluator import lisp_eval
-from reader import lisp_read
+from reader import lisp_read, lisp_read_file
 from printer import lisp_print
 
 logger = logging.getLogger("lisp.lisp")
@@ -46,15 +46,19 @@ def eval(sexp, env=None):
     return s
 
 
-def main():
+def repl():
     setup_logging()
     environment = Frame.global_frame()
+    environment.setf("*in*", sys.stdin)
+    environment.setf("*out*", sys.stdout)
+    environment.setf("*err*", sys.stderr)
     intr = 0
     should_stop = False
     while not should_stop:
         inp = ""
         prompt = ">>> "
         complete = False
+        sexp = None
         while not complete:
             try:
                 inp = inp + raw_input(prompt)
@@ -87,6 +91,31 @@ def main():
             print "exception: " + repr(e)
             print "sexp:", sexp
             pdb.post_mortem()
+
+
+def run_file(fin, fout, ferr):
+    inp = ""
+    env = Frame.global_frame()
+    env.setf("*in*", fin)
+    env.setf("*out*", fout)
+    env.setf("*err*", ferr)
+
+    for sexp in lisp_read_file(fin):
+        sexp = lisp_eval(sexp, env)
+        s    = lisp_print(sexp)
+
+        fout.write(s + "\n")
+
+def main():
+    if len(sys.argv) == 1:
+        repl()
+
+    for a in sys.argv[1:]:
+        if a == "-":
+            run_file(sys.stdin, sys.stdout, sys.stderr)
+        else:
+            with file(a, "r") as f:
+                run_file(f, sys.stdout, sys.stderr)
 
 if __name__ == '__main__':
     main()

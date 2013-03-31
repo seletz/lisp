@@ -107,4 +107,20 @@ def lisp_read(s, state=None):
 
     return None
 
+def lisp_read_file(fin):
+    inp = ""
+    for line in fin.readlines():
+        inp = inp + line
+        try:
+            sexp = lisp_read(inp)
+        except ReaderError:
+            continue
+
+        if sexp is None:
+            continue
+
+        yield sexp
+
+        inp = ""
+
 # vim: set ft=python ts=4 sw=4 expandtab :
