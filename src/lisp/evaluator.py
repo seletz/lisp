@@ -163,7 +163,7 @@ def evaluate_define(sexp, env):
     env.define(symbol.name)
     env.set(symbol.name, value)
 
-    return "ok"
+    return "ok -- " + symbol.name
 
 def evaluate_assignment(sexp, env):
     """

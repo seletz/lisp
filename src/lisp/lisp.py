@@ -46,12 +46,17 @@ def eval(sexp, env=None):
     return s
 
 
-def repl():
-    setup_logging()
+def make_env(fin=sys.stdin, fout=sys.stdout, ferr=sys.stderr):
     environment = Frame.global_frame()
-    environment.setf("*in*", sys.stdin)
-    environment.setf("*out*", sys.stdout)
-    environment.setf("*err*", sys.stderr)
+    environment.setf("*in*", fin)
+    environment.setf("*out*", fout)
+    environment.setf("*err*", ferr)
+    return environment
+
+
+def repl(environment=None):
+    if environment is None:
+        environment = make_env()
     intr = 0
     should_stop = False
     while not should_stop:
@@ -95,14 +100,23 @@ def repl():
 
 def run_file(fin, fout, ferr):
     inp = ""
-    env = Frame.global_frame()
-    env.setf("*in*", fin)
-    env.setf("*out*", fout)
-    env.setf("*err*", ferr)
+
+    env = make_env(fin, fout, ferr)
 
     for sexp in lisp_read_file(fin):
-        sexp = lisp_eval(sexp, env)
-        s    = lisp_print(sexp)
+        try:
+            sexp = lisp_eval(sexp, env)
+            s    = lisp_print(sexp)
+        except EvaluatorError, e:
+            print "error evaluating: " + str(e)
+            print "sexp:", sexp
+            pdb.post_mortem()
+            repl(env)
+        except Exception, e:
+            print "exception: " + repr(e)
+            print "sexp:", sexp
+            pdb.post_mortem()
+            repl(env)
 
         fout.write(s + "\n")
 
@@ -118,6 +132,7 @@ def main():
                 run_file(f, sys.stdout, sys.stderr)
 
 if __name__ == '__main__':
+    setup_logging()
     main()
 
 # vim: set ft=python ts=4 sw=4 expandtab :

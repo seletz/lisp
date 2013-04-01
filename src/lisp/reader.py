@@ -109,11 +109,11 @@ def lisp_read(s, state=None):
 
 def lisp_read_file(fin):
     inp = ""
-    for line in fin.readlines():
+    for nr, line in enumerate(fin.readlines()):
         inp = inp + line
         try:
             sexp = lisp_read(inp)
-        except ReaderError:
+        except ReaderError, e:
             continue
 
         if sexp is None:
