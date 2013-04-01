@@ -38,4 +38,9 @@ The thing now has:
 
 no, NO macros yet.  Also no map, fold, reduce, ... yet.
 
+Examples
+========
+
+See the `examples` directory.
+
 .. vim: set ft=rst tw=75 nocin nosi ai sw=4 ts=4 expandtab:
